@@ -83,7 +83,10 @@ class Uniswap_amm:
             return self.asset_A_amount/self.asset_B_amount
         else:
             raise Exception("Wrong input! Enter eithor A or B!")
-
+    
+    def calculate_slippage(self):
+        # TODO!!!!!!!!!!!!!
+        return 0
 
 
 
