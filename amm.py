@@ -5,8 +5,7 @@
 import math
 import numpy as np
 
-class Uniswap_amm:
-
+class Amm:
     def __init__(self, fee_rate, asset_A_amount, asset_B_amount, LP_token_number):
         # initialize the AMM 
 
@@ -15,6 +14,21 @@ class Uniswap_amm:
         self.asset_B_amount = asset_B_amount
         self.constant = self.asset_A_amount * self.asset_B_amount
         self.total_LP_token = LP_token_number
+    
+    def print_detailed_info(self):
+        # print detailed info of the Amm 
+
+        print("Total number of outstanding tokens: ", self.total_LP_token)
+        print("A reserves: ", self.asset_A_amount)
+        print("B reserves: ", self.asset_B_amount)
+        print("Transaction fee:", self.fee_rate)
+
+class Uniswap_amm(Amm):
+
+    def __init__(self, fee_rate, asset_A_amount, asset_B_amount, LP_token_number):
+        # initialize the Uniswap_amm
+
+        super(Uniswap_amm, self).__init__(fee_rate, asset_A_amount, asset_B_amount, LP_token_number)
     
     def total_liquidity(self):
         # Here, use sqrt(XY) to calculate the total liquidity
@@ -90,13 +104,9 @@ class Uniswap_amm:
 
 
 
-class XRPL_amm:
+class XRPL_amm(Amm):
 
     def __init__(self, fee_rate, asset_A_amount, asset_B_amount, LP_token_number):
-        # initialize the AMM 
+        # initialize the XRPL_amm
 
-        self.fee_rate = fee_rate
-        self.asset_A_amount = asset_A_amount
-        self.asset_B_amount = asset_B_amount
-        self.constant = self.asset_A_amount * self.asset_B_amount
-        self.total_LP_token = LP_token_number
+        super(XRPL_amm, self).__init__(fee_rate, asset_A_amount, asset_B_amount, LP_token_number)

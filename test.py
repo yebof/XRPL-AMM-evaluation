@@ -26,6 +26,7 @@ def testcase_1_basic():
     print(new_amm.asset_B_amount)
     print("Should be 36:")
     print(new_amm.total_LP_token)
+    new_amm.print_detailed_info()
 
 if __name__ == "__main__":
     print("Testing...")
