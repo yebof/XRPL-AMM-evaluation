@@ -18,6 +18,14 @@ def testcase_1_basic():
     print(new_amm.total_liquidity())
     print("Should be (1.0, 4):")
     print(new_amm.deposite('A',10))
+    print("Should be (10.0, 1.0):")
+    print(new_amm.withdraw(4))
+    print("Should be 90:")
+    print(new_amm.asset_A_amount)
+    print("Should be 9:")
+    print(new_amm.asset_B_amount)
+    print("Should be 36:")
+    print(new_amm.total_LP_token)
 
 if __name__ == "__main__":
     print("Testing...")
