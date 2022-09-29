@@ -110,3 +110,12 @@ class XRPL_amm(Amm):
         # initialize the XRPL_amm
 
         super(XRPL_amm, self).__init__(fee_rate, asset_A_amount, asset_B_amount, LP_token_number)
+
+
+
+class Balancer_amm(Amm):
+
+    def __init__(self, fee_rate, asset_A_amount, asset_B_amount, LP_token_number):
+        # initialize the Balancer_amm
+
+        super(Balancer_amm, self).__init__(fee_rate, asset_A_amount, asset_B_amount, LP_token_number)
