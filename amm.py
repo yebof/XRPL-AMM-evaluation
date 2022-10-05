@@ -89,18 +89,18 @@ class Uniswap_amm(Amm):
         # input the asset type (str: 'A' or 'B')
         # return the reference price (float) for this type of asset
 
-        # TODO!!!!!!!!!!!!!
+        trans_fee_multiplier = 1 / (1-self.fee_rate)
 
         if asset_type == 'A':
-            return self.asset_B_amount/self.asset_A_amount
+            return self.asset_B_amount/self.asset_A_amount * trans_fee_multiplier
         elif asset_type == 'B':
-            return self.asset_A_amount/self.asset_B_amount
+            return self.asset_A_amount/self.asset_B_amount * trans_fee_multiplier
         else:
             raise Exception("Wrong input! Enter eithor A or B!")
-    
-    def calculate_slippage(self):
+
+    def swap(self, target_asset_type, amount, SP_price):
         # TODO!!!!!!!!!!!!!
-        return 0
+        pass
 
 
 
