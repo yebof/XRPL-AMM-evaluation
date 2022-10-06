@@ -2,7 +2,9 @@
 #
 # AMM simulator
 
+from bdb import effective
 import math
+from multiprocessing import pool
 import numpy as np
 
 class Amm:
@@ -87,7 +89,7 @@ class Uniswap_amm(Amm):
     
     def check_SP_price(self, asset_type):
         # input the asset type (str: 'A' or 'B')
-        # return the reference price (float) for this type of asset
+        # return the reference/spot price (float) for this type of asset
 
         trans_fee_multiplier = 1 / (1-self.fee_rate)
 
@@ -99,8 +101,47 @@ class Uniswap_amm(Amm):
             raise Exception("Wrong input! Enter eithor A or B!")
 
     def swap(self, target_asset_type, amount, SP_price):
-        # TODO!!!!!!!!!!!!!
-        pass
+        # input the type of asset you want to buy (str: 'A' or 'B'),
+        # the amount of that asset (float)
+        # and the reference/spot price (float) for that
+
+        # return the final price and slippage 
+
+        # dx = Xdy/(Y-dy)
+
+        if target_asset_type == 'A':
+            # you need to pay B in this case 
+            amount_without_fee = self.asset_B_amount * amount / (self.asset_A_amount - amount)
+            # update the pool
+            self.asset_A_amount -= amount
+            self.asset_B_amount += amount_without_fee
+            # swap fee 
+            fee = amount_without_fee * self.fee_rate
+            final_amount = amount_without_fee + fee
+            # deposit the swap fee to the pool 
+            self.asset_B_amount += fee
+            self.constant = self.asset_A_amount * self.asset_B_amount
+
+        elif target_asset_type == 'B':
+            # you need to pay A in this case 
+            amount_without_fee = self.asset_A_amount * amount / (self.asset_B_amount - amount)
+            # update the pool
+            self.asset_A_amount += amount_without_fee
+            self.asset_B_amount -= amount
+            # swap fee
+            fee = amount_without_fee * self.fee_rate
+            final_amount = amount_without_fee + fee
+            # deposit the swap fee to the pool 
+            self.asset_A_amount += fee
+            self.constant = self.asset_A_amount * self.asset_B_amount
+
+        else:
+            raise Exception("Wrong input! Enter eithor A or B!")
+        
+        effective_price = final_amount/amount
+        slippage = (effective_price - SP_price) / SP_price
+        
+        return final_amount, slippage
 
 
 
