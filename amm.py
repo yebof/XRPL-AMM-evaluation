@@ -14,7 +14,6 @@ class Amm:
         self.fee_rate = fee_rate
         self.asset_A_amount = asset_A_amount
         self.asset_B_amount = asset_B_amount
-        self.constant = self.asset_A_amount * self.asset_B_amount
         self.total_LP_token = LP_token_number
     
     def print_detailed_info(self):
@@ -31,6 +30,7 @@ class Uniswap_amm(Amm):
         # initialize the Uniswap_amm
 
         super(Uniswap_amm, self).__init__(fee_rate, asset_A_amount, asset_B_amount, LP_token_number)
+        self.constant = self.asset_A_amount * self.asset_B_amount
     
     def total_liquidity(self):
         # Here, use sqrt(XY) to calculate the total liquidity
@@ -147,11 +147,28 @@ class Uniswap_amm(Amm):
 
 class XRPL_amm(Amm):
 
-    def __init__(self, fee_rate, asset_A_amount, asset_B_amount, LP_token_number):
-        # initialize the XRPL_amm
+    def __init__(self, fee_rate, asset_A_amount, asset_B_amount, weight_A, weight_B, LP_token_number):
+        # initialize the XRPL amm
 
         super(XRPL_amm, self).__init__(fee_rate, asset_A_amount, asset_B_amount, LP_token_number)
 
+        self.weight_A = weight_A
+        self.weight_B = weight_B
+        # according to equation I: 
+        self.constant = (self.asset_A_amount ** 0.5) * (self.asset_B_amount ** 0.5)
+
+    def check_SP_price(self, asset_type):
+        # input the asset type (str: 'A' or 'B')
+        # return the reference/spot price (float) for this type of asset
+
+        trans_fee_multiplier = 1 / (1-self.fee_rate)
+
+        if asset_type == 'A':
+            return (self.asset_B_amount/self.weight_B) / (self.asset_A_amount/self.weight_A) * trans_fee_multiplier
+        elif asset_type == 'B':
+            return (self.asset_A_amount/self.weight_A) / (self.asset_B_amount/self.weight_B) * trans_fee_multiplier
+        else:
+            raise Exception("Wrong input! Enter eithor A or B!")
 
 
 class Balancer_amm(Amm):

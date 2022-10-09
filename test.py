@@ -35,5 +35,5 @@ def testcase_uniswap_2():
 
 if __name__ == "__main__":
     print("Testing...")
-    # testcase_uniswap_1()
-    testcase_uniswap_2()
+    testcase_uniswap_1()
+    # testcase_uniswap_2()
