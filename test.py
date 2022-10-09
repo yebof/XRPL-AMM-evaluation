@@ -4,7 +4,7 @@
  
 import amm as amms
 
-def testcase_1_basic():
+def testcase_uniswap_1():
     new_amm = amms.Uniswap_amm(0.003, 90, 9, 36)
     print("Should be 90:")
     print(new_amm.asset_A_amount)
@@ -28,7 +28,12 @@ def testcase_1_basic():
     print(new_amm.total_LP_token)
     new_amm.print_detailed_info()
 
+def testcase_uniswap_2():
+    new_amm = amms.Uniswap_amm(0.003, 10, 100, 10)
+    print(new_amm.check_SP_price('B'))
+    print(new_amm.swap('B',90,new_amm.check_SP_price('B')))
+
 if __name__ == "__main__":
     print("Testing...")
-    testcase_1_basic()
-    
+    # testcase_uniswap_1()
+    testcase_uniswap_2()
