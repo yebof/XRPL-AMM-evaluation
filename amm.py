@@ -183,15 +183,33 @@ class XRPL_amm(Amm):
             self.asset_B_amount += amount_of_added_asset
             self.asset_A_amount += amount_of_added_A_asset
             self.total_LP_token += number_of_new_tokens
-            
+
             return amount_of_added_A_asset, number_of_new_tokens
 
         else:
             raise Exception("Wrong input! Enter eithor A or B for asset type!")
     
     def deposite_single(self, type_of_added_asset, amount_of_added_asset):
-        # todo 
-        pass
+        # input the type of asset to deposit (str: 'A' or 'B') and the amount of the asset (float)
+        # return the amount of returned LP tokens (float)
+
+        if type_of_added_asset == 'A':
+            number_of_new_tokens = self.total_LP_token * ( (1+(amount_of_added_asset - self.fee_rate * (1-self.weight_A)*amount_of_added_asset)/self.asset_A_amount)**self.weight_A - 1 )
+            self.asset_A_amount += amount_of_added_asset
+            self.total_LP_token += number_of_new_tokens
+
+            return number_of_new_tokens
+
+        elif type_of_added_asset == 'B':
+            number_of_new_tokens = self.total_LP_token * ( (1+(amount_of_added_asset - self.fee_rate * (1-self.weight_B)*amount_of_added_asset)/self.asset_B_amount)**self.weight_B - 1 )
+            self.asset_B_amount += amount_of_added_asset
+            self.total_LP_token += number_of_new_tokens
+
+            return number_of_new_tokens
+
+        else:
+            raise Exception("Wrong input! Enter eithor A or B for asset type!")
+
 
     def check_SP_price(self, asset_type):
         # input the asset type (str: 'A' or 'B')
