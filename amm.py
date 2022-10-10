@@ -2,19 +2,17 @@
 #
 # AMM simulator
 
-from bdb import effective
 import math
-from multiprocessing import pool
 import numpy as np
 
 class Amm:
-    def __init__(self, fee_rate, asset_A_amount, asset_B_amount, LP_token_number):
+    def __init__(self, fee_rate, asset_A_amount, asset_B_amount):
         # initialize the AMM 
 
         self.fee_rate = fee_rate
         self.asset_A_amount = asset_A_amount
         self.asset_B_amount = asset_B_amount
-        self.total_LP_token = LP_token_number
+        self.total_LP_token = 0
     
     def print_detailed_info(self):
         # print detailed info of the Amm 
@@ -24,12 +22,14 @@ class Amm:
         print("B reserves: ", self.asset_B_amount)
         print("Transaction fee:", self.fee_rate)
 
+
 class Uniswap_amm(Amm):
 
-    def __init__(self, fee_rate, asset_A_amount, asset_B_amount, LP_token_number):
+    def __init__(self, fee_rate, asset_A_amount, asset_B_amount, initial_LP_token_number):
         # initialize the Uniswap_amm
 
-        super(Uniswap_amm, self).__init__(fee_rate, asset_A_amount, asset_B_amount, LP_token_number)
+        super(Uniswap_amm, self).__init__(fee_rate, asset_A_amount, asset_B_amount)
+        self.total_LP_token = initial_LP_token_number
         self.constant = self.asset_A_amount * self.asset_B_amount
     
     def total_liquidity(self):
@@ -144,18 +144,54 @@ class Uniswap_amm(Amm):
         return final_amount, slippage
 
 
-
 class XRPL_amm(Amm):
 
-    def __init__(self, fee_rate, asset_A_amount, asset_B_amount, weight_A, weight_B, LP_token_number):
+    def __init__(self, fee_rate, asset_A_amount, asset_B_amount, weight_A, weight_B):
         # initialize the XRPL amm
 
-        super(XRPL_amm, self).__init__(fee_rate, asset_A_amount, asset_B_amount, LP_token_number)
+        super(XRPL_amm, self).__init__(fee_rate, asset_A_amount, asset_B_amount)
 
         self.weight_A = weight_A
         self.weight_B = weight_B
         # according to equation I: 
         self.constant = (self.asset_A_amount ** 0.5) * (self.asset_B_amount ** 0.5)
+        self.total_LP_token = (self.asset_A_amount ** 0.5) * (self.asset_B_amount ** 0.5)
+    
+    def deposite_all(self, type_of_added_asset, amount_of_added_asset):
+        # input the type of asset to deposit (str: 'A' or 'B') and the amount of the asset (float)
+        # return the amount of another type of asset (float) to deposit and the number of returned LP tokens (float)
+
+        # db = Bda/A
+        # da = Adb/B
+        if type_of_added_asset == 'A':
+            amount_of_added_B_asset = self.asset_B_amount * amount_of_added_asset / self.asset_A_amount
+            
+            number_of_new_tokens = amount_of_added_asset / self.asset_A_amount * self.total_LP_token
+            
+            self.asset_A_amount += amount_of_added_asset
+            self.asset_B_amount += amount_of_added_B_asset
+            self.total_LP_token += number_of_new_tokens
+
+            return amount_of_added_B_asset, number_of_new_tokens
+
+        elif type_of_added_asset == 'B':
+            amount_of_added_A_asset = self.asset_A_amount * amount_of_added_asset / self.asset_B_amount
+
+            number_of_new_tokens = amount_of_added_asset / self.asset_B_amount * self.total_LP_token
+            
+
+            self.asset_B_amount += amount_of_added_asset
+            self.asset_A_amount += amount_of_added_A_asset
+            self.total_LP_token += number_of_new_tokens
+            
+            return amount_of_added_A_asset, number_of_new_tokens
+
+        else:
+            raise Exception("Wrong input! Enter eithor A or B for asset type!")
+    
+    def deposite_single(self, type_of_added_asset, amount_of_added_asset):
+        # todo 
+        pass
 
     def check_SP_price(self, asset_type):
         # input the asset type (str: 'A' or 'B')
