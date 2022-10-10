@@ -209,7 +209,42 @@ class XRPL_amm(Amm):
 
         else:
             raise Exception("Wrong input! Enter eithor A or B for asset type!")
+    
+    def withdraw_all(self, amount_of_tokens):
+        # input the amount of LP tokens you want ot withdraw (float)
+        # return the amount of asset A (float) and asset B (float) you can get
 
+        asset_A_return = amount_of_tokens / self.total_LP_token * self.asset_A_amount
+        asset_B_return = amount_of_tokens / self.total_LP_token * self.asset_B_amount
+
+        self.asset_A_amount -= asset_A_return
+        self.asset_B_amount -= asset_B_return
+        self.total_LP_token -= amount_of_tokens
+
+        return asset_A_return, asset_B_return
+    
+    def withdraw_single(self, type_of_added_asset, amount_of_tokens):
+        # input type of asset (str: 'A' or 'B') and the amount of LP tokens you want ot withdraw (float)
+        # return the amount of asset (float) you can get
+
+        if type_of_added_asset == 'A':
+            asset_return = self.asset_A_amount * (1-(1-amount_of_tokens/self.total_LP_token)**(1/self.weight_A)) * (1-(1-self.weight_A)*self.fee_rate)
+
+            self.asset_A_amount -= asset_return
+            self.total_LP_token -= amount_of_tokens
+
+            return asset_return
+
+        elif type_of_added_asset == 'B':
+            asset_return = self.asset_B_amount * (1-(1-amount_of_tokens/self.total_LP_token)**(1/self.weight_B)) * (1-(1-self.weight_B)*self.fee_rate)
+
+            self.asset_B_amount -= asset_return
+            self.total_LP_token -= amount_of_tokens
+
+            return asset_return
+
+        else:
+            raise Exception("Wrong input! Enter eithor A or B for asset type!")
 
     def check_SP_price(self, asset_type):
         # input the asset type (str: 'A' or 'B')
