@@ -258,6 +258,32 @@ class XRPL_amm(Amm):
             return (self.asset_A_amount/self.weight_A) / (self.asset_B_amount/self.weight_B) * trans_fee_multiplier
         else:
             raise Exception("Wrong input! Enter eithor A or B!")
+    
+    def swap(self, target_asset_type, amount, SP_price):
+        # input the type of asset you want to buy (str: 'A' or 'B'),
+        # the amount of that asset (float)
+        # and the reference/spot price (float) for that
+
+        # return the final price and slippage 
+        if target_asset_type == 'A':
+            final_amount = self.asset_B_amount * ((self.asset_A_amount/(self.asset_A_amount-amount))**(self.weight_A/self.weight_B)-1)*(1/(1-self.fee_rate))
+
+            self.asset_A_amount -= amount
+            self.asset_B_amount += final_amount
+
+        elif target_asset_type == 'B':
+            final_amount = self.asset_A_amount * ((self.asset_B_amount/(self.asset_B_amount-amount))**(self.weight_B/self.weight_A)-1)*(1/(1-self.fee_rate))
+
+            self.asset_B_amount -= amount
+            self.asset_A_amount += final_amount
+
+        else:
+            raise Exception("Wrong input! Enter eithor A or B!")
+        
+        effective_price = final_amount/amount
+        slippage = (effective_price - SP_price) / SP_price
+
+        return final_amount, slippage
 
 
 class Balancer_amm(Amm):
