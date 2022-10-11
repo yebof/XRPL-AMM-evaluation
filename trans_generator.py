@@ -16,6 +16,24 @@ def save_list_to_file_linebyline(list, filename):
                 list_file.write(str(j)+', ')
             list_file.write('\n')
 
+def read_list_from_file_linebyline(filename):
+    # read the file name 
+    dirname = os.path.dirname(__file__)
+    absolute_filename = os.path.join(dirname, filename)
+
+    res_list = []
+    with open(absolute_filename, 'r') as file:
+        text = file.read().strip()
+        lines = text.split("\n")
+        for i in lines:
+            trans = []
+            items = i.split(',')
+            trans.append(float(items[0].strip()))
+            trans.append(items[1].strip())
+            trans.append(float(items[2].strip()))
+            res_list.append(trans)
+    return res_list
+
 def generate_time_index(length, num):
     # generate the time index for transactions 
 
@@ -45,5 +63,7 @@ def generate_trans(time_index, A_B_ratio, A_price_range, B_price_range):
 if __name__ == "__main__":
     print("Generating transactions...")
     trans_list = generate_trans(generate_time_index(96, 4), 0.7, [10, 1000], [3, 300])
-    print(trans_list)
+    # print(trans_list)
     save_list_to_file_linebyline(trans_list, "transaction_list.txt")
+
+    # print(read_list_from_file_linebyline("transaction_list.txt"))
