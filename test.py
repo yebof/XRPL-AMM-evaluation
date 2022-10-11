@@ -36,7 +36,16 @@ def testcase_uniswap_2():
 def testcase_xrpl_amm():
     new_amm = amms.XRPL_amm(0.003, 10000, 100000, 0.5, 0.5)
     print(new_amm.check_SP_price('B'))
+    print(new_amm.asset_A_amount)
+    print(new_amm.asset_B_amount)
     print(new_amm.swap('B',90,new_amm.check_SP_price('B')))
+    print(new_amm.asset_A_amount)
+    print(new_amm.asset_B_amount)
+    print(new_amm.total_LP_token)
+    print(new_amm.deposite_all('A',10))
+    print(new_amm.asset_A_amount)
+    print(new_amm.asset_B_amount)
+    print(new_amm.withdraw_all(31.594230541636506))
 
 if __name__ == "__main__":
     print("Testing...")
